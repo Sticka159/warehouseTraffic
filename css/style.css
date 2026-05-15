@@ -1,0 +1,300 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* ===================== */
+/* TOP BAR */
+/* ===================== */
+
+.top-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.top-bar input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    background: white;
+}
+
+/* ===================== */
+/* FILTER BAR */
+/* ===================== */
+
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filter-btn {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.filter-btn.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.filter-btn:hover {
+    background: #cbd5f5;
+}
+
+/* ===================== */
+/* TABULKA */
+/* ===================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
+}
+
+thead {
+    background: #e2e8f0;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+th {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+th:hover {
+    background: #cbd5f5;
+}
+
+tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: 0.2s;
+}
+
+tr:hover {
+    background: #f1f5f9;
+    cursor: pointer;
+}
+
+/* ===================== */
+/* STATUS BARVY */
+/* ===================== */
+
+.status-ok {
+    background: rgba(34,197,94,0.15);
+}
+
+.status-waiting {
+    background: rgba(234,179,8,0.15);
+}
+
+.status-problem {
+    background: rgba(239,68,68,0.15);
+}
+
+/* ===================== */
+/* LOGIN */
+/* ===================== */
+
+.login-container {
+    max-width: 300px;
+    margin: 100px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.login-container input {
+    width: 94%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #cbd5f5;
+    border-radius: 5px;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background: #22c55e;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-container button:hover {
+    background: #16a34a;
+}
+
+#error {
+    color: #dc2626;
+}
+
+/* ===================== */
+/* BUTTONS */
+/* ===================== */
+
+button {
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* ADD BUTTON */
+
+#addTruckBtn {
+    background: #3b82f6;
+    color: white;
+    white-space: nowrap;
+}
+
+#addTruckBtn:hover {
+    background: #2563eb;
+}
+
+/* MODAL BUTTONS */
+
+.modal-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+#saveBtn {
+    background: #22c55e;
+    color: white;
+}
+
+#saveBtn:hover {
+    background: #16a34a;
+}
+
+#cancelBtn {
+    background: #ef4444;
+    color: white;
+}
+
+#cancelBtn:hover {
+    background: #dc2626;
+}
+
+/* ===================== */
+/* MODAL */
+/* ===================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    margin: 100px auto;
+    width: 320px;
+    border-radius: 10px;
+    text-align: center;
+    animation: fadeIn 0.2s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.modal-content input,
+.modal-content select {
+    width: 94%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #cbd5f5;
+}
+
+/* ===================== */
+/* ANIMACE */
+/* ===================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================== */
+/* NOVÉ STATUSY */
+/* ===================== */
+
+.status-on_way {
+    background: rgba(59,130,246,0.15);
+}
+
+.status-waiting_load {
+    background: rgba(234,179,8,0.15);
+}
+
+.status-at_ramp {
+    background: rgba(168,85,247,0.15);
+}
+
+.status-loaded {
+    background: rgba(34,197,94,0.15);
+}
+
+/* ===================== */
+/* THEME TOGGLE */
+/* ===================== */
+
+.theme-toggle {
+    padding: 10px 12px; /* aby to nebylo namačkaný */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    z-index: 999;
+}
+.status-cancelled {
+    background: rgba(239,68,68,0.25); /* červená */
+    text-decoration: line-through;
+    opacity: 0.8;
+}

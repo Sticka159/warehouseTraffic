@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Warehouse Traffic</title>
+
+    <!-- 🔥 důležité ID -->
+    <link id="themeStylesheet" rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<!-- 🌞 / 🌙 TOGGLE -->
+<div class="theme-toggle">
+    <button id="lightBtn" class="filter-btn">☀️</button>
+    <button id="darkBtn" class="filter-btn">🌙</button>
+</div>
+
+<div class="container">
+    <h1>🚛 Přehled kamionů</h1>
+
+    <div class="top-bar">
+        <button id="addTruckBtn" style="display:none;">
+            ➕ Nový kamion
+        </button>
+
+        <input
+                type="text"
+                id="searchInput"
+                placeholder="🔎 Hledat (SPZ, přepravce, info...)"
+        >
+    </div>
+
+    <div class="filter-bar">
+        <button id="activeBtn" class="filter-btn active">📅 Aktivní</button>
+        <button id="historyBtn" class="filter-btn">📚 Historie</button>
+    </div>
+
+    <table id="table">
+        <thead>
+        <tr>
+            <th>Brána</th>
+            <th>SPZ</th>
+            <th>Přepravce</th>
+            <th>Info</th>
+            <th>Poznámka od skladníka</th>
+            <th>Stav</th>
+            <th>Vytvořeno</th>
+            <th>Změněno</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Kamion</h2>
+
+        <div class="admin-only">
+            <input id="gate" placeholder="Brána">
+            <input id="spz" placeholder="SPZ">
+            <input id="carrier" placeholder="Přepravce">
+        </div>
+
+        <input id="info" placeholder="Info">
+        <input id="feedback" placeholder="Poznámka od skladníka">
+
+        <label>Stav</label>
+        <select id="status">
+            <option value="on_way">🚚 Na cestě</option>
+            <option value="waiting_load">⏳ Čeká na nakládku</option>
+            <option value="at_ramp">🏭 Na rampě</option>
+            <option value="loaded">✅ Naloženo</option>
+            <option value="cancelled">❌ Storno</option>
+        </select>
+
+        <div class="modal-actions">
+            <button id="saveBtn" onclick="saveTruck()">💾 Uložit</button>
+            <button id="cancelBtn" onclick="closeModal()">❌ Zrušit</button>
+        </div>
+    </div>
+</div>
+
+<!-- 📅 HISTORY MODAL -->
+<div id="historyModal" class="modal">
+    <div class="modal-content">
+        <h2>Vyber období</h2>
+
+        <label>Od:</label>
+        <input type="date" id="dateFrom">
+
+        <label>Do:</label>
+        <input type="date" id="dateTo">
+
+        <div class="modal-actions">
+            <button onclick="applyDateFilter()">🔎 Filtrovat</button>
+            <button onclick="closeHistoryModal()">❌ Zrušit</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="../js/app.js"></script>
+<script src="../js/theme.js"></script>
+
+</body>
+</html>

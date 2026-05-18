@@ -57,4 +57,4 @@ jobs:
           app-name: 'warehouseTraffic'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2B9FB67CD3104C0D9016069698A71FB6 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_86D224426131444EB2C598E5EC64B618 }}

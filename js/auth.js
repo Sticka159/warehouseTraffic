@@ -1,5 +1,5 @@
 export async function checkAuth() {
-    const res = await fetch("../php/checkAuth.php");
+    const res = await fetch("/php/checkAuth.php");
     const data = await res.json();
 
     if (!data.authenticated) {

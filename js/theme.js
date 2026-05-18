@@ -27,14 +27,14 @@ darkBtn.onclick = () => {
 // ===== FUNKCE =====
 
 function setLight() {
-    themeLink.href = "../css/style.css";
+    themeLink.href = "/css/style.css";
 
     lightBtn.classList.add("active");
     darkBtn.classList.remove("active");
 }
 
 function setDark() {
-    themeLink.href = "../css/altStyle.css";
+    themeLink.href = "/css/altStyle.css";
 
     darkBtn.classList.add("active");
     lightBtn.classList.remove("active");

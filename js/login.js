@@ -2,7 +2,7 @@ async function login() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch("/php/login.php", {
+    const res = await fetch("../php/login.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"

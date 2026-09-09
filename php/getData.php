@@ -1,19 +1,39 @@
 <?php
 require 'db.php';
 
-$sql = "SELECT * FROM traffic ORDER BY created_at DESC";
+$sql = "SELECT
+            id,
+            gate,
+            spz,
+            carrier,
+            info,
+            feedback,
+            status,
+            queue_number,
+            created_at,
+            updated_at
+        FROM traffic
+        ORDER BY created_at DESC";
+
 $stmt = sqlsrv_query($conn, $sql);
+
+if ($stmt === false) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        "success" => false,
+        "error" => sqlsrv_errors()
+    ]);
+    exit;
+}
 
 $data = [];
 
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
 
-    // ✅ created_at (už správně)
     if ($row['created_at'] instanceof DateTime) {
         $row['created_at'] = $row['created_at']->format('c');
     }
 
-    // 🔥 FIX: updated_at stejný formát jako created_at
     if ($row['updated_at'] instanceof DateTime) {
         $row['updated_at'] = $row['updated_at']->format('c');
     }

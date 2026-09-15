@@ -16,10 +16,7 @@ $status = $_POST['status'] ?? null;
 $role = $_SESSION['role'] ?? 'worker';
 
 if (!$id) {
-    echo json_encode([
-        "success" => false,
-        "error" => "Missing ID"
-    ]);
+    echo json_encode(["success" => false, "error" => "Missing ID"]);
     exit;
 }
 
@@ -44,11 +41,7 @@ if ($stmtOld && $row = sqlsrv_fetch_array($stmtOld, SQLSRV_FETCH_ASSOC)) {
 // 2. ODCHOD Z FRONTY
 // =====================================================
 
-if (
-    $oldStatus === 'waiting_load' &&
-    $status !== 'waiting_load' &&
-    $oldQueue !== null
-) {
+if ($oldStatus === 'waiting_load' && $status !== 'waiting_load' && $oldQueue !== null) {
 
     $sqlShift = "UPDATE traffic
                  SET queue_number = queue_number - 1
@@ -64,20 +57,14 @@ if (
 
 $queueNumber = $oldQueue;
 
-if (
-    $status === 'waiting_load' &&
-    $oldStatus !== 'waiting_load'
-) {
+if ($status === 'waiting_load' && $oldStatus !== 'waiting_load') {
 
     $sqlQueue = "SELECT ISNULL(MAX(queue_number), 0) + 1 AS nextQueue
                  FROM traffic";
 
     $stmtQueue = sqlsrv_query($conn, $sqlQueue);
 
-    if (
-        $stmtQueue &&
-        $row = sqlsrv_fetch_array($stmtQueue, SQLSRV_FETCH_ASSOC)
-    ) {
+    if ($stmtQueue && $row = sqlsrv_fetch_array($stmtQueue, SQLSRV_FETCH_ASSOC)) {
         $queueNumber = $row['nextQueue'];
     }
 }
@@ -156,70 +143,65 @@ if ($stmt === false) {
 
 if ($oldStatus !== $status) {
 
-    $sqlLog = "INSERT INTO TrafficStatusChanges (
-                    TrafficId,
-                    Gate,
-                    SPZ,
-                    Carrier,
-                    Info,
-                    Feedback,
-                    OldStatus,
-                    NewStatus,
-                    QueueNumber,
-                    CreatedAt
-               )
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Načíst aktuální data z traffic
+    $sqlSnapshot = "SELECT
+                        gate,
+                        spz,
+                        carrier,
+                        info,
+                        feedback,
+                        status,
+                        queue_number,
+                        created_at
+                    FROM traffic
+                    WHERE id = ?";
 
-    $paramsLog = [
-        $id,
-        $gate,
-        $spz,
-        $carrier,
-        $info,
-        $feedback,
-        $oldStatus,
-        $status,
-        $queueNumber,
-        null
-    ];
+    $stmtSnapshot = sqlsrv_query($conn, $sqlSnapshot, [$id]);
 
-    /*
-     * U CreatedAt chceme původní datum z traffic.
-     * Načteme ho přímo z databáze.
-     */
-    $sqlCreated = "SELECT created_at
-                   FROM traffic
-                   WHERE id = ?";
-
-    $stmtCreated = sqlsrv_query($conn, $sqlCreated, [$id]);
-
-    if (
-        $stmtCreated &&
-        $createdRow = sqlsrv_fetch_array(
-            $stmtCreated,
+    if ($stmtSnapshot && $snapshot = sqlsrv_fetch_array(
+            $stmtSnapshot,
             SQLSRV_FETCH_ASSOC
-        )
-    ) {
-        $paramsLog[9] = $createdRow['created_at'];
-    }
+        )) {
 
-    $stmtLog = sqlsrv_query($conn, $sqlLog, $paramsLog);
+        $sqlLog = "INSERT INTO TrafficStatusChanges (
+                        TrafficId,
+                        Gate,
+                        SPZ,
+                        Carrier,
+                        Info,
+                        Feedback,
+                        OldStatus,
+                        NewStatus,
+                        QueueNumber,
+                        CreatedAt
+                   )
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    if ($stmtLog === false) {
-        echo json_encode([
-            "success" => false,
-            "error" => "Traffic updated, but status change could not be logged.",
-            "sql_error" => sqlsrv_errors()
-        ]);
-        exit;
+        $paramsLog = [
+            $id,
+            $snapshot['gate'],
+            $snapshot['spz'],
+            $snapshot['carrier'],
+            $snapshot['info'],
+            $snapshot['feedback'],
+            $oldStatus,
+            $snapshot['status'],
+            $snapshot['queue_number'],
+            $snapshot['created_at']
+        ];
+
+        $stmtLog = sqlsrv_query($conn, $sqlLog, $paramsLog);
+
+        if ($stmtLog === false) {
+            echo json_encode([
+                "success" => false,
+                "error" => "Traffic updated, but status change could not be logged.",
+                "sql_error" => sqlsrv_errors()
+            ]);
+            exit;
+        }
     }
 }
 
 
-// =====================================================
-// 7. ÚSPĚCH
-// =====================================================
-
-echo json_encode([
-    "success" => true
-]);
+echo json_encode(["success" => true]);

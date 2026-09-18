@@ -28,7 +28,10 @@ if (!$id) {
 // 1. ZJISTIT STARÝ STAV + FRONTU
 // =====================================================
 
-$sqlOld = "SELECT status, queue_number FROM traffic WHERE id = ?";
+$sqlOld = "SELECT status, queue_number
+           FROM traffic
+           WHERE id = ?";
+
 $stmtOld = sqlsrv_query($conn, $sqlOld, [$id]);
 
 $oldStatus = null;
@@ -98,7 +101,7 @@ if ($status !== 'waiting_load') {
 
 if ($role === 'worker') {
 
-    $sql = "UPDATE traffic 
+    $sql = "UPDATE traffic
             SET info = ?,
                 feedback = ?,
                 status = ?,
@@ -116,7 +119,7 @@ if ($role === 'worker') {
 
 } else {
 
-    $sql = "UPDATE traffic 
+    $sql = "UPDATE traffic
             SET gate = ?,
                 spz = ?,
                 carrier = ?,
@@ -151,10 +154,58 @@ if ($stmt === false) {
 
 
 // =====================================================
-// 6. ZMĚNA STATUSU NA LOADED → ULOŽIT SNAPSHOT
+// 6. ZMĚNA STATUSU NA LOADED → ULOŽIT KOMPLETNÍ SNAPSHOT
 // =====================================================
 
 if ($oldStatus !== $status && $status === 'loaded') {
+
+    // -------------------------------------------------
+    // Načíst aktuální hodnoty přímo z traffic
+    // -------------------------------------------------
+
+    $sqlSnapshot = "SELECT
+                        gate,
+                        spz,
+                        carrier,
+                        info,
+                        feedback,
+                        queue_number,
+                        created_at
+                    FROM traffic
+                    WHERE id = ?";
+
+    $stmtSnapshot = sqlsrv_query(
+        $conn,
+        $sqlSnapshot,
+        [$id]
+    );
+
+    if ($stmtSnapshot === false) {
+        echo json_encode([
+            "success" => false,
+            "error" => "Traffic updated, but snapshot could not be loaded.",
+            "sql_error" => sqlsrv_errors()
+        ]);
+        exit;
+    }
+
+    $snapshot = sqlsrv_fetch_array(
+        $stmtSnapshot,
+        SQLSRV_FETCH_ASSOC
+    );
+
+    if (!$snapshot) {
+        echo json_encode([
+            "success" => false,
+            "error" => "Traffic updated, but snapshot record could not be found."
+        ]);
+        exit;
+    }
+
+
+    // -------------------------------------------------
+    // Uložit kompletní snapshot
+    // -------------------------------------------------
 
     $sqlLog = "INSERT INTO TrafficStatusChanges (
                     TrafficId,
@@ -172,38 +223,22 @@ if ($oldStatus !== $status && $status === 'loaded') {
 
     $paramsLog = [
         $id,
-        $gate,
-        $spz,
-        $carrier,
-        $info,
-        $feedback,
+        $snapshot['gate'],
+        $snapshot['spz'],
+        $snapshot['carrier'],
+        $snapshot['info'],
+        $snapshot['feedback'],
         $oldStatus,
         $status,
-        $queueNumber,
-        null
+        $snapshot['queue_number'],
+        $snapshot['created_at']
     ];
 
-    /*
-     * U CreatedAt chceme původní datum z traffic.
-     * Načteme ho přímo z databáze.
-     */
-    $sqlCreated = "SELECT created_at
-                   FROM traffic
-                   WHERE id = ?";
-
-    $stmtCreated = sqlsrv_query($conn, $sqlCreated, [$id]);
-
-    if (
-        $stmtCreated &&
-        $createdRow = sqlsrv_fetch_array(
-            $stmtCreated,
-            SQLSRV_FETCH_ASSOC
-        )
-    ) {
-        $paramsLog[9] = $createdRow['created_at'];
-    }
-
-    $stmtLog = sqlsrv_query($conn, $sqlLog, $paramsLog);
+    $stmtLog = sqlsrv_query(
+        $conn,
+        $sqlLog,
+        $paramsLog
+    );
 
     if ($stmtLog === false) {
         echo json_encode([

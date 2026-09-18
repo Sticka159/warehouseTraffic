@@ -86,45 +86,48 @@ $createdAt = $newRow['created_at'];
 
 
 // =====================================================
-// 3. ZAPSAT NOVÝ ZÁZNAM DO STATUS CHANGES
+// 3. ZAPSAT DO STATUS CHANGES POUZE PŘI LOADED
 // =====================================================
 
-$sqlLog = "INSERT INTO TrafficStatusChanges (
-                TrafficId,
-                Gate,
-                SPZ,
-                Carrier,
-                Info,
-                Feedback,
-                OldStatus,
-                NewStatus,
-                QueueNumber,
-                CreatedAt
-           )
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+if ($status === 'loaded') {
 
-$paramsLog = [
-    $trafficId,
-    $gate,
-    $spz,
-    $carrier,
-    $info,
-    $feedback,
-    null,
-    $status,
-    null,
-    $createdAt
-];
+    $sqlLog = "INSERT INTO TrafficStatusChanges (
+                    TrafficId,
+                    Gate,
+                    SPZ,
+                    Carrier,
+                    Info,
+                    Feedback,
+                    OldStatus,
+                    NewStatus,
+                    QueueNumber,
+                    CreatedAt
+               )
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-$stmtLog = sqlsrv_query($conn, $sqlLog, $paramsLog);
+    $paramsLog = [
+        $trafficId,
+        $gate,
+        $spz,
+        $carrier,
+        $info,
+        $feedback,
+        null,
+        $status,
+        null,
+        $createdAt
+    ];
 
-if ($stmtLog === false) {
-    echo json_encode([
-        "success" => false,
-        "error" => "Traffic created, but status change could not be logged.",
-        "sql_error" => sqlsrv_errors()
-    ]);
-    exit;
+    $stmtLog = sqlsrv_query($conn, $sqlLog, $paramsLog);
+
+    if ($stmtLog === false) {
+        echo json_encode([
+            "success" => false,
+            "error" => "Traffic created, but status change could not be logged.",
+            "sql_error" => sqlsrv_errors()
+        ]);
+        exit;
+    }
 }
 
 

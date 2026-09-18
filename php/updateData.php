@@ -151,10 +151,10 @@ if ($stmt === false) {
 
 
 // =====================================================
-// 6. ZMĚNA STATUSU → ULOŽIT SNAPSHOT
+// 6. ZMĚNA STATUSU NA LOADED → ULOŽIT SNAPSHOT
 // =====================================================
 
-if ($oldStatus !== $status) {
+if ($oldStatus !== $status && $status === 'loaded') {
 
     $sqlLog = "INSERT INTO TrafficStatusChanges (
                     TrafficId,
